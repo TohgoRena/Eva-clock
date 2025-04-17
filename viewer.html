@@ -61,14 +61,19 @@
     const iframe = document.getElementById('clock-frame');
     const display = document.getElementById('url-display');
 
-    function updateClockURL() {
+      function updateClockURL() {
       const jp = document.getElementById('color-jp').value.substring(1);
       const jst = document.getElementById('color-jst').value.substring(1);
       const clk = document.getElementById('color-clock').value.substring(1);
-      const url = `clock-customized.html?jp=${jp}&jst=${jst}&clock=${clk}`;
-      iframe.src = url;
-      display.innerHTML = `現在のURL: <code>${url}</code>`;
+
+      const baseUrl = location.origin + location.pathname.replace(/\/[^\/]*$/, '/clock-customized.html');
+      const query = `?jp=${jp}&jst=${jst}&clock=${clk}`;
+      const fullUrl = baseUrl + query;
+
+      iframe.src = fullUrl;
+      display.innerHTML = `現在のURL: <code>${fullUrl}</code>`;
     }
+
 
     document.querySelectorAll('input[type="color"]').forEach(input => {
       input.addEventListener('input', updateClockURL);
