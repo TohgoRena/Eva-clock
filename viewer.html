@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Eva Clock カスタマイザー</title>
+  <style>
+    body {
+      background: #111;
+      color: white;
+      font-family: sans-serif;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .controls {
+      margin-bottom: 2rem;
+    }
+
+    label {
+      display: inline-block;
+      margin: 0 1rem;
+    }
+
+    iframe {
+      width: 100%;
+      height: 200px;
+      border: none;
+      background: #000;
+    }
+
+    .url-display {
+      margin-top: 1.5rem;
+      font-size: 0.9rem;
+      color: #aaa;
+      word-break: break-all;
+    }
+  </style>
+</head>
+<body>
+  <h1>Eva Clock カスタマイザー</h1>
+
+  <div class="controls">
+    <label>
+      日本標準時: <input type="color" id="color-jp" value="#FFD700">
+    </label>
+    <label>
+      JST: <input type="color" id="color-jst" value="#FF0000">
+    </label>
+    <label>
+      時計: <input type="color" id="color-clock" value="#FFD700">
+    </label>
+  </div>
+
+  <iframe id="clock-frame" src="clock-customized.html?jp=FFD700&jst=FF0000&clock=FFD700"></iframe>
+
+  <div class="url-display" id="url-display">
+    現在のURL: <code>clock-customized.html?jp=FFD700&jst=FF0000&clock=FFD700</code>
+  </div>
+
+  <script>
+    const iframe = document.getElementById('clock-frame');
+    const display = document.getElementById('url-display');
+
+    function updateClockURL() {
+      const jp = document.getElementById('color-jp').value.substring(1);
+      const jst = document.getElementById('color-jst').value.substring(1);
+      const clk = document.getElementById('color-clock').value.substring(1);
+      const url = `clock-customized.html?jp=${jp}&jst=${jst}&clock=${clk}`;
+      iframe.src = url;
+      display.innerHTML = `現在のURL: <code>${url}</code>`;
+    }
+
+    document.querySelectorAll('input[type="color"]').forEach(input => {
+      input.addEventListener('input', updateClockURL);
+    });
+  </script>
+</body>
+</html>
