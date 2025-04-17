@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <title>日本標準時 JST [デジタル時計]</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    @font-face {
+      font-family: 'Digital-7';
+      src: url('fonts/digital-7 (mono).ttf') format('truetype');
+    }
+
+    body {
+      background-color: black;
+      color: #FFD700;
+      font-family: 'HG正楷書体-PRO', monospace;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .clock {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      transform: scale(1.5);
+    }
+
+    .label {
+      font-size: 4rem;
+      color: #FFD700;
+      font-family: 'HG明朝E', serif;
+      letter-spacing: -0.2rem;
+    }
+
+    .red {
+      font-size: 4rem;
+      color: red;
+      font-family: monospace;
+      letter-spacing: -0.1rem;
+    }
+
+    .time-display {
+      font-size: 5rem;
+      font-family: 'Digital-7', monospace;
+      font-weight: normal;
+      letter-spacing: -0.1rem;
+      color: #FFD700;
+    }
+
+    .time-display .colon {
+      letter-spacing: -0.6rem;
+      display: inline-block;
+      margin-left: -0.5rem;
+      margin-right: -0.1rem;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="clock">
+    <span class="label">日本標準時</span>
+    <span class="red">JST</span>
+    <div class="time-display" id="jst-time">00:00:00</div>
+  </div>
+
+  <script>
+    function updateClock() {
+      const now = new Date();
+      const jst = new Date(now.getTime());
+      const h = String(jst.getHours()).padStart(2, '0');
+      const m = String(jst.getMinutes()).padStart(2, '0');
+      const s = String(jst.getSeconds()).padStart(2, '0');
+
+      const colon = `<span class="colon">:</span>`;
+      document.getElementById('jst-time').innerHTML = `${h}${colon}${m}${colon}${s}`;
+    }
+
+    setInterval(updateClock, 1000);
+    updateClock();
+  </script>
+</body>
+
+</html>

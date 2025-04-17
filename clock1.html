@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Clock</title>
+    <style>
+        body {
+            background-color: black;
+            color: #FFD700;
+            font-family: 'HG正楷書体-PRO', monospace;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding-left: 100px; /* 左余白の追加 */
+        }
+
+        p {
+            line-height: 1.5;
+        }
+
+        .clock {
+            text-align: left; /* 左詰めに変更 */
+            transform: scale(1.5);
+        }
+
+        .time-display {
+            font-size: 4rem;
+            font-weight: bold;
+            letter-spacing: 0.1rem;
+            margin: 0px 0;
+        }
+
+        .label {
+            font-size: 1.5rem;
+            margin-bottom: 0px;
+        }
+
+        .time-row {
+            margin: 0px 0;
+        }
+
+        .red {
+            color: red;
+            font-family: monospace;
+            font-weight: normal;
+        }
+    </style>
+</head>
+<body>
+    <div class="clock">
+        <div class="time-row">
+            <div class="time-display">
+                <span class="label">日本標準時 <span class="red">JST</span></span> <span class="label" id="jst-time">00:00:00</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function updateClock() {
+            const now = new Date();
+
+            // Japan Standard Time (JST)
+            const jstTime = new Date(now.getTime());
+            document.getElementById('jst-time').textContent = jstTime.toLocaleTimeString('en-US', { hour12: false });
+        }
+
+        setInterval(updateClock, 1000);
+        updateClock();
+    </script>
+</body>
+</html>
