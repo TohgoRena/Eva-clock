@@ -57,27 +57,29 @@
     現在のURL: <code>clock-customized.html?jp=FFD700&jst=FF0000&clock=FFD700</code>
   </div>
 
-  <script>
-    const iframe = document.getElementById('clock-frame');
-    const display = document.getElementById('url-display');
+<script>
+  const iframe = document.getElementById('clock-frame');
+  const display = document.getElementById('url-display');
 
-      function updateClockURL() {
-      const jp = document.getElementById('color-jp').value.substring(1);
-      const jst = document.getElementById('color-jst').value.substring(1);
-      const clk = document.getElementById('color-clock').value.substring(1);
+  function updateClockURL() {
+    const jp = document.getElementById('color-jp').value.substring(1);
+    const jst = document.getElementById('color-jst').value.substring(1);
+    const clk = document.getElementById('color-clock').value.substring(1);
 
-      const baseUrl = location.origin + location.pathname.replace(/\/[^\/]*$/, '/clock-customized.html');
-      const query = `?jp=${jp}&jst=${jst}&clock=${clk}`;
-      const fullUrl = baseUrl + query;
+    // 完全なフルURLを生成
+    const fullUrl = new URL('clock-customized.html', location.href);
+    fullUrl.searchParams.set('jp', jp);
+    fullUrl.searchParams.set('jst', jst);
+    fullUrl.searchParams.set('clock', clk);
 
-      iframe.src = fullUrl;
-      display.innerHTML = `現在のURL: <code>${fullUrl}</code>`;
-    }
+    iframe.src = fullUrl.toString();
+    display.innerHTML = `現在のURL: <code>${fullUrl.toString()}</code>`;
+  }
 
+  document.querySelectorAll('input[type="color"]').forEach(input => {
+    input.addEventListener('input', updateClockURL);
+  });
+</script>
 
-    document.querySelectorAll('input[type="color"]').forEach(input => {
-      input.addEventListener('input', updateClockURL);
-    });
-  </script>
 </body>
 </html>
