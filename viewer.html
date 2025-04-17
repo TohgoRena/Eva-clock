@@ -66,14 +66,11 @@
     const jst = document.getElementById('color-jst').value.substring(1);
     const clk = document.getElementById('color-clock').value.substring(1);
 
-    // 完全なフルURLを生成
-    const fullUrl = new URL('clock-customized.html', location.href);
-    fullUrl.searchParams.set('jp', jp);
-    fullUrl.searchParams.set('jst', jst);
-    fullUrl.searchParams.set('clock', clk);
+    const baseUrl = 'https://tohgorena.github.io/Eva-clock/clock-customized.html';
+    const fullUrl = `${baseUrl}?jp=${jp}&jst=${jst}&clock=${clk}`;
 
-    iframe.src = fullUrl.toString();
-    display.innerHTML = `現在のURL: <code>${fullUrl.toString()}</code>`;
+    iframe.src = fullUrl;
+    display.innerHTML = `現在のURL: <code>${fullUrl}</code>`;
   }
 
   document.querySelectorAll('input[type="color"]').forEach(input => {
