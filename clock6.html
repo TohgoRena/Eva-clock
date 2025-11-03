@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>日本標準時 Clock</title>
+<style>
+  :root{
+    --bg:#000; --fg:#fff; --fg2:#000; --scale:1;
+
+    /* レイアウト調整ノブ */
+    --time-gap: 36px;     /* HH/MM/SS の間隔 */
+    --num-size: 180px;    /* Digital-7 の数字サイズ */
+    --num-weight: 400;
+
+    --label-col: 64px;    /* 右のラベル長方形の幅（X位置） */
+    --label-pad: 10px;    /* 上下の余白（Y位置） */
+    --label-size: 30px;   /* ★ h と 時 を同じサイズにする（m/分、s/秒も） */
+
+    --date-size: 44px;
+    --bars-h: 70px;
+  }
+
+  html,body{height:100%;margin:0;background:var(--bg);color:var(--fg);overflow:hidden;}
+  .stage{height:100%;display:grid;place-items:center;}
+  .wrap{transform:scale(var(--scale));display:grid;row-gap:18px}
+
+  /* フォント */
+  @font-face{font-family:"Digital7";src:url("./fonts/digital-7 (mono).ttf") format("truetype");font-display:swap;}
+  @font-face{font-family:"AptosLocal";src:local("Aptos"),local("Aptos Display");}
+  @font-face{font-family:"HGMinchoELocal";src:local("HG明朝E"),local("HGS明朝E"),local("HGP明朝E");}
+
+  /* 見出し・日付・曜日 */
+  .header{display:grid;grid-template-columns:auto auto auto;align-items:end;column-gap:24px;}
+  .jst-wrap{display:flex;align-items:center;gap:16px;}
+  .bar{width:4px;height:var(--bars-h);background:var(--fg);}
+  .jst{font-family:"HGMinchoELocal","Yu Mincho","Noto Serif JP",serif;font-size:60px;line-height:1;letter-spacing:0;white-space:nowrap;}
+  .date{font-family:"AptosLocal","Segoe UI","Noto Sans JP",system-ui,sans-serif;font-size:var(--date-size);line-height:1;border:3px solid var(--fg);padding:8px 18px;white-space:nowrap;}
+  .weekday{font-family:"AptosLocal","Segoe UI","Noto Sans JP",system-ui,sans-serif;font-size:var(--date-size);font-weight:600;line-height:1;border:3px solid var(--fg);padding:8px 18px;background:var(--fg);color:var(--fg2);white-space:nowrap;}
+
+  /* 時刻 */
+  .time{display:flex;align-items:flex-end;justify-content:center;column-gap:var(--time-gap);}
+  .block{display:grid;grid-template-columns:auto var(--label-col);align-items:stretch;}
+  .num{
+    grid-column:1;align-self:center;justify-self:center;
+    font-family:"Digital7","SF Mono","Consolas",monospace;
+    font-weight:var(--num-weight);font-size:var(--num-size);
+    line-height:0.88;letter-spacing:0.01em;
+  }
+
+  /* ラベル長方形：中央線に沿わせる */
+  .label-col{
+    grid-column:2;position:relative; /* 位置基準 */
+    width:var(--label-col);
+    display:flex;flex-direction:column;justify-content:space-between;
+    /* 補助線を出したい場合は下2行のコメントアウトを外してください
+    border-left:3px solid var(--fg);
+    outline:3px solid rgba(255,255,255,.25);
+    */
+  }
+  /* 右上・右下 → 中央線に揃える（水平センター） */
+  .tag-top,.tag-bottom{
+    position:absolute;left:50%;transform:translateX(-50%); /* ←中央線に乗せる */
+    white-space:nowrap;text-align:center;pointer-events:none;
+    font-size:var(--label-size);line-height:1;
+  }
+  .tag-top{
+    top:var(--label-pad);
+    font-family:"AptosLocal","Segoe UI",system-ui,sans-serif; /* h/m/s */
+  }
+  .tag-bottom{
+    bottom:var(--label-pad);
+    font-family:"HGMinchoELocal","Yu Mincho","Noto Serif JP",serif; /* 時/分/秒 */
+  }
+</style>
+</head>
+<body>
+  <div class="stage">
+    <div class="wrap">
+      <div class="header">
+        <div class="jst-wrap"><div class="bar"></div><div class="jst">日本標準時</div><div class="bar"></div></div>
+        <div class="date" id="dateBox">-- / --</div>
+        <div class="weekday" id="weekdayBox">---</div>
+      </div>
+
+      <div class="time">
+        <div class="block">
+          <span class="num" id="hh">00</span>
+          <div class="label-col">
+            <span class="tag-top">h</span>
+            <span class="tag-bottom">時</span>
+          </div>
+        </div>
+        <div class="block">
+          <span class="num" id="mm">00</span>
+          <div class="label-col">
+            <span class="tag-top">m</span>
+            <span class="tag-bottom">分</span>
+          </div>
+        </div>
+        <div class="block">
+          <span class="num" id="ss">00</span>
+          <div class="label-col">
+            <span class="tag-top">s</span>
+            <span class="tag-bottom">秒</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+const tz='Asia/Tokyo';
+function tick(){
+  const now=new Date();
+  const parts=Object.fromEntries(
+    new Intl.DateTimeFormat('ja-JP',{
+      timeZone:tz,hour12:false,month:'2-digit',day:'2-digit',
+      hour:'2-digit',minute:'2-digit',second:'2-digit'
+    }).formatToParts(now).map(p=>[p.type,p.value])
+  );
+  document.getElementById('dateBox').textContent = `${parts.month} / ${parts.day}`;
+  document.getElementById('weekdayBox').textContent =
+    new Intl.DateTimeFormat('en-US',{timeZone:tz,weekday:'short'}).format(now);
+  document.getElementById('hh').textContent = parts.hour;
+  document.getElementById('mm').textContent = parts.minute;
+  document.getElementById('ss').textContent = parts.second;
+}
+tick(); setInterval(tick,1000);
+</script>
+</body>
+</html>
