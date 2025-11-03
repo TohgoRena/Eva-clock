@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>日本標準時 Clock（透明背景）</title>
+<style>
+  :root{
+    --fg:#fff;
+    --fg2:#000;
+    --scale:1;
+
+    --time-gap: 36px;
+    --num-size: 180px;
+    --num-weight: 400;
+
+    --label-col: 64px;
+    --label-pad: 10px;
+    --label-size: 30px;
+
+    --date-size: 44px;
+    --bars-h: 70px;
+  }
+
+  html,body{
+    height:100%;
+    margin:0;
+    background:transparent;  /* ← 背景を透明に */
+    color:var(--fg);
+    overflow:hidden;
+  }
+
+  .stage{
+    height:100%;
+    display:grid;
+    place-items:center;
+    background:transparent; /* 念のため */
+  }
+
+  .wrap{
+    transform:scale(var(--scale));
+    display:grid;
+    row-gap:18px;
+    justify-items:center;
+    background:transparent;
+  }
+
+  /* フォント設定 */
+  @font-face{font-family:"Digital7";src:url("./fonts/digital-7 (mono).ttf") format("truetype");font-display:swap;}
+  @font-face{font-family:"AptosLocal";src:local("Aptos"),local("Aptos Display");}
+  @font-face{font-family:"HGMinchoELocal";src:local("HG明朝E"),local("HGS明朝E"),local("HGP明朝E");}
+  @font-face{font-family:"HGSeikaishotaiPRO";src:local("HG正楷書体-PRO"),local("HG正楷書体-PRON");}
+
+  /* ヘッダー部 */
+  .header{
+    display:grid;
+    grid-template-columns:auto 1fr 1fr;
+    align-items:end;
+    column-gap:24px;
+    background:transparent;
+  }
+
+  .jst-wrap{
+    display:flex;
+    align-items:center;
+    gap:16px;
+    background:transparent;
+  }
+
+  .bar{
+    width:4px;
+    height:var(--bars-h);
+    background:var(--fg);
+  }
+
+  .jst{
+    font-family:"HGMinchoELocal","Yu Mincho","Noto Serif JP",serif;
+    font-size:60px;
+    line-height:1;
+    white-space:nowrap;
+  }
+
+  .date{
+    font-family:"AptosLocal","Segoe UI","Noto Sans JP",system-ui,sans-serif;
+    font-size:var(--date-size);
+    line-height:1;
+    border:3px solid var(--fg);
+    padding:8px 18px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:transparent;
+  }
+
+  .weekday{
+    font-family:"AptosLocal","Segoe UI","Noto Sans JP",system-ui,sans-serif;
+    font-size:var(--date-size);
+    font-weight:600;
+    line-height:1;
+    border:3px solid var(--fg);
+    padding:8px 18px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:var(--fg);
+    color:var(--fg2);
+  }
+
+  /* 時刻部 */
+  .time{
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
+    column-gap:var(--time-gap);
+    background:transparent;
+  }
+
+  .block{
+    display:grid;
+    grid-template-columns:auto var(--label-col);
+    align-items:stretch;
+    background:transparent;
+  }
+
+  .num{
+    grid-column:1;
+    align-self:center;
+    justify-self:center;
+    font-family:"Digital7","SF Mono","Consolas",monospace;
+    font-weight:var(--num-weight);
+    font-size:var(--num-size);
+    line-height:0.88;
+    letter-spacing:0.01em;
+  }
+
+  .label-col{
+    grid-column:2;
+    position:relative;
+    width:var(--label-col);
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    background:transparent;
+  }
+
+  .tag-top,
+  .tag-bottom{
+    position:absolute;
+    left:50%;
+    transform:translateX(-50%);
+    white-space:nowrap;
+    text-align:center;
+    pointer-events:none;
+    font-size:var(--label-size);
+    line-height:1;
+  }
+
+  .tag-top{
+    top:var(--label-pad);
+    font-family:"AptosLocal","Segoe UI",system-ui,sans-serif;
+  }
+
+  .tag-bottom{
+    bottom:var(--label-pad);
+    font-family:"HGSeikaishotaiPRO","HG正楷書体-PRO","HG正楷書体-PRON","Yu Mincho","Noto Serif JP",serif;
+  }
+</style>
+</head>
+<body>
+  <div class="stage">
+    <div class="wrap">
+      <div class="header">
+        <div class="jst-wrap">
+          <div class="bar"></div>
+          <div class="jst">日本標準時</div>
+          <div class="bar"></div>
+        </div>
+        <div class="date" id="dateBox">-- / --</div>
+        <div class="weekday" id="weekdayBox">---</div>
+      </div>
+
+      <div class="time">
+        <div class="block">
+          <span class="num" id="hh">00</span>
+          <div class="label-col">
+            <span class="tag-top">h</span>
+            <span class="tag-bottom">時</span>
+          </div>
+        </div>
+        <div class="block">
+          <span class="num" id="mm">00</span>
+          <div class="label-col">
+            <span class="tag-top">m</span>
+            <span class="tag-bottom">分</span>
+          </div>
+        </div>
+        <div class="block">
+          <span class="num" id="ss">00</span>
+          <div class="label-col">
+            <span class="tag-top">s</span>
+            <span class="tag-bottom">秒</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+const tz='Asia/Tokyo';
+function tick(){
+  const now=new Date();
+  const parts=Object.fromEntries(
+    new Intl.DateTimeFormat('ja-JP',{
+      timeZone:tz,hour12:false,month:'2-digit',day:'2-digit',
+      hour:'2-digit',minute:'2-digit',second:'2-digit'
+    }).formatToParts(now).map(p=>[p.type,p.value])
+  );
+  document.getElementById('dateBox').textContent = `${parts.month} / ${parts.day}`;
+  document.getElementById('weekdayBox').textContent =
+    new Intl.DateTimeFormat('en-US',{timeZone:tz,weekday:'short'}).format(now);
+  document.getElementById('hh').textContent = parts.hour;
+  document.getElementById('mm').textContent = parts.minute;
+  document.getElementById('ss').textContent = parts.second;
+}
+tick(); setInterval(tick,1000);
+</script>
+</body>
+</html>
